@@ -11,7 +11,7 @@
     #include <unistd.h>
     #include <limits.h>
 
-    std::string enderecoLIBRASOfficeJar(){
+    std::string enderecoLIBRASOffice(){
         char caminhoExe[PATH_MAX];
         /*Espelho que reflete sobre o processo que olha pra ele. Identifica o endereço do programa em execução*/
         bool readLink = readlink("/proc/self/exe", caminhoExe, PATH_MAX);
