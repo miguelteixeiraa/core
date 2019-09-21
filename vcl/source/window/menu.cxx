@@ -56,6 +56,12 @@
 #include <string_view>
 #include <vector>
 
+//ADD LIBRAS
+#include "LASO.hxx"
+//END LIBRAS
+
+
+
 namespace vcl
 {
 

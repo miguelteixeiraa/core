@@ -336,6 +336,10 @@
           script the office from outside.</desc>
         </info>
         <value/>
+        <!--ADD LIBRAS-->
+    	<value>socket,host=localhost,port=8100,tcpNoDelay=1;urp;</value>
+		<!--END LIBRAS-->
+
         <!-- JB: Empty default inserted into empty property node. Remove if NIL
              was intended -->
       </prop>

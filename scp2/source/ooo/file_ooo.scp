@@ -131,6 +131,16 @@ File gid_File_Share_Registry_Ctlseqcheck_Xcd
     Name (th) = "ctlseqcheck.xcd";
 End
 
+//ADD LIBRAS
+File gid_File_laso_files
+    TXT_FILE_BODY;
+    Styles = (FILELIST, PACKED, WORKSTATION, OVERWRITE);
+    Dir = FILELIST_DIR;
+    Name = "laso_files.filelist";
+End
+//END LIBRAS
+
+
 // user interface configuration files
 UI_FILELIST(basicide, "UIConfig/modules/BasicIDE.filelist")
 UI_FILELIST(cui, "UIConfig/cui.filelist")
@@ -705,6 +715,8 @@ File gid_File_Extension_Dictionary_Te
 	TXT_FILE_BODY;
 End
 #endif
+
+
 
 #if defined WITH_MYSPELL_DICTS
 File gid_File_Extension_Dictionary_Th

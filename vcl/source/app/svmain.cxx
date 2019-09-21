@@ -97,6 +97,19 @@
 #include <rtl/strbuf.hxx>
 #endif
 
+//ADD LIBRAS
+#include "LASO.hxx"
+#ifdef _WIN32
+    #include <windows.h>
+    #include <tchar.h>
+#endif
+
+#ifdef __linux__
+    #include "initLASOLinux.hxx"
+#endif
+//END LIBRAS
+
+
 using namespace ::com::sun::star;
 
 static bool g_bIsLeanException;
@@ -278,6 +291,12 @@ namespace vclmain
 }
 #endif
 
+//ADD LIBRAS
+#ifdef _WIN32
+	PROCESS_INFORMATION process_info;
+#endif
+//END LIBRAS
+
 
 bool InitVCL()
 {
@@ -289,6 +308,32 @@ bool InitVCL()
 
     if( pExceptionHandler != nullptr )
         return false;
+
+	//ADD LIBRAS
+	std::ofstream ofs (LASO_LOG_PATH,
+						std::ofstream::out|std::ofstream::trunc);
+	ofs.close();
+	std::ofstream debug (DBG_LASO_LOG_PATH,
+						std::ofstream::out|std::ofstream::trunc);
+	debug.close();
+
+	#ifdef __linux__
+        linuxCreateProcessJar(enderecoLIBRASOfficeJar());
+	#endif
+
+	#ifdef _WIN32
+		STARTUPINFO info={sizeof(info)};
+		const TCHAR* target = _T("LIBRASOffice.exe");
+
+		CreateProcess(target, NULL, NULL, NULL, TRUE, 0, NULL, NULL, &info, &process_info);
+		{
+			WaitForSingleObject(process_info.hProcess, INFINITE);
+			CloseHandle(process_info.hProcess);
+			CloseHandle(process_info.hThread);
+		}
+	#endif
+	//END LIBRAS
+
 
     EmbeddedFontsHelper::clearTemporaryFontFiles();
 
@@ -407,6 +452,18 @@ void DeInitVCL()
     //tear everything down and recreate them on the next call, there's too many
     //(c++) singletons that point to stuff that gets deleted during shutdown
     //which won't be recreated on restart.
+	//ADD LIBRAS
+	#ifdef _WIN32
+        TerminateProcess(process_info.hProcess, 0)
+		CloseHandle(process_info.hProcess);
+		CloseHandle(process_info.hThread);
+	#endif
+                
+    #ifdef __linux__
+        mataProcessoLASOFront();
+    #endif
+	//END LIBRAS
+
     if (comphelper::LibreOfficeKit::isActive())
         return;
 
