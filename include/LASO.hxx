@@ -10,12 +10,18 @@
     #include <sys/stat.h>
     #include <unistd.h>
     #include <limits.h>
-    char caminhoExe[PATH_MAX];
-    bool readLink = readlink("/proc/self/exe", caminhoExe, PATH_MAX);
-    std::string caminhoDir = caminhoExe;
-    caminhoDir.erase(caminhoDir.begin() + caminhoDir.find("soffice"), caminhoDir.end());
-    std::string LASO_LOG = caminhoDir + "/LASO.log";
-    std::string LASO_DEBUG = caminhoDir + "/LASO_DEBUG.log";
+
+    std::string enderecoLIBRASOfficeJar(){
+        char caminhoExe[PATH_MAX];
+        /*Espelho que reflete sobre o processo que olha pra ele. Identifica o endereço do programa em execução*/
+        bool readLink = readlink("/proc/self/exe", caminhoExe, PATH_MAX);
+	    std::string caminhoDir = caminhoExe;
+	    caminhoDir.erase(caminhoDir.begin() + caminhoDir.find("soffice"), caminhoDir.end());
+	    return caminhoDir;
+    }
+
+    std::string LASO_LOG = enderecoLIBRASOfficeJar() + "/LASO.log";
+    std::string LASO_DEBUG = enderecoLIBRASOfficeJar() + "/LASO_DEBUG.log";
 	#define LASO_LOG_PATH LASO_LOG
 	#define DBG_LASO_LOG_PATH LASO_DEBUG
 #endif
