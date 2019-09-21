@@ -44,6 +44,7 @@ $(eval $(call gb_Helper_register_executables,NONE, \
 	localize \
 	makedepend \
 	mbsdiff \
+    laso_files \
 	mork_helper \
 	osl_process_child \
 	pdf2xml \
