@@ -1,6 +1,7 @@
 --with-parallelism
 --with-distro=LibreOfficeLinux
---with-package-format=deb rpm --enable-epm
+--with-package-format=deb rpm 
+--enable-epm
 --enable-ext-languagetool
 --with-lang=pt-BR
 --with-jdk-home=/usr/lib/jvm/java-12-oracle
