@@ -2530,6 +2530,7 @@ endef
 
 $(eval $(call gb_Helper_register_packages_for_install,ooo,\
 	coinmp \
+	laso_files \
 ))
 
 else # SYSTEM_COINMP
