@@ -20,9 +20,9 @@
 	    return caminhoDir;
     }
     
-    std::string enderecoLIBRASOfficeLinuxVar = enderecoLIBRASOfficeLinux();
-    std::string LASO_LOG = enderecoLIBRASOfficeLinuxVar + "/LASO.log";
-    std::string LASO_DEBUG = enderecoLIBRASOfficeLinuxVar + "/LASO_DEBUG.log";
+    extern std::string enderecoLIBRASOfficeLinuxVar = enderecoLIBRASOfficeLinux();
+    extern std::string LASO_LOG = enderecoLIBRASOfficeLinuxVar + "/LASO.log";
+    extern std::string LASO_DEBUG = enderecoLIBRASOfficeLinuxVar + "/LASO_DEBUG.log";
 	#define LASO_LOG_PATH LASO_LOG
 	#define DBG_LASO_LOG_PATH LASO_DEBUG
 #endif
@@ -31,8 +31,8 @@
     #include <Windows.h>
     wchar_t enderecoLIBRASOffice[MAX_PATH];
     GetModuleFileName(NULL, enderecoLIBRASOffice, MAX_PATH);
-    std::string endFinalLIBRASOffice = enderecoLIBRASOffice + "\\LASO.log";
-    std::string endFinalLIBRASOfficeDebug = enderecoLIBRASOffice + "\\LASO_DEBUG.log";
+    extern std::string endFinalLIBRASOffice = enderecoLIBRASOffice + "\\LASO.log";
+    extern std::string endFinalLIBRASOfficeDebug = enderecoLIBRASOffice + "\\LASO_DEBUG.log";
 	#define LASO_LOG_PATH endFinalLIBRASOffice
 	#define DBG_LASO_LOG_PATH endFinalLIBRASOfficeDebug
 #endif 
