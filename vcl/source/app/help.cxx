@@ -36,6 +36,17 @@
 
 //ADD LIBRAS
 #include "LASO.hxx"
+
+#ifdef _WIN32
+	#define LASO_LOG_PATH enderecoLIBRASOfficeLinux() + "\\LASO.log"
+	#define DBG_LASO_LOG_PATH enderecoLIBRASOfficeLinux() + "\\LASO_DEBUG.log"
+#endif
+
+#ifdef __linux__
+	#define LASO_LOG_PATH enderecoLIBRASOfficeLinux() + "/LASO.log"
+	#define DBG_LASO_LOG_PATH enderecoLIBRASOfficeLinux() + "/LASO_DEBUG.log"
+#endif
+
 //END LIBRAS
 
 

@@ -19,19 +19,17 @@
 	    caminhoDir.erase(caminhoDir.begin() + caminhoDir.find("soffice"), caminhoDir.end());
 	    return caminhoDir;
     }
-    
-	#define LASO_LOG_PATH enderecoLIBRASOfficeLinux() + "/LASO.log"
-	#define DBG_LASO_LOG_PATH enderecoLIBRASOfficeLinux() + "/LASO_DEBUG.log"
 #endif
 
 #ifdef _WIN32
     #include <Windows.h>
-    wchar_t enderecoLIBRASOffice[MAX_PATH];
-    GetModuleFileName(NULL, enderecoLIBRASOffice, MAX_PATH);
-    extern std::string endFinalLIBRASOffice = enderecoLIBRASOffice + "\\LASO.log";
-    extern std::string endFinalLIBRASOfficeDebug = enderecoLIBRASOffice + "\\LASO_DEBUG.log";
-	extern std::string LASO_LOG_PATH endFinalLIBRASOffice;
-	extern std:: DBG_LASO_LOG_PATH endFinalLIBRASOfficeDebug;
+    std::string enderecoLIBRASOfficeWin(){
+        wchar_t enderecoLIBRASOffice[MAX_PATH];
+        GetModuleFileName(NULL, enderecoLIBRASOffice, MAX_PATH);
+        std::string caminhoDir = enderecoLIBRASOffice;
+        caminhoDir.erase(caminhoDir.begin() + caminhoDir.find("soffice"), caminhoDir.end());
+        return caminhoDir;
+    }
 #endif 
 #endif
 //END LIBRAS

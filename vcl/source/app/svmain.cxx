@@ -102,10 +102,14 @@
 #ifdef _WIN32
     #include <windows.h>
     #include <tchar.h>
+	#define LASO_LOG_PATH enderecoLIBRASOfficeLinux() + "\\LASO.log"
+	#define DBG_LASO_LOG_PATH enderecoLIBRASOfficeLinux() + "\\LASO_DEBUG.log"
 #endif
 
 #ifdef __linux__
     #include "initLASOLinux.hxx"
+	#define LASO_LOG_PATH enderecoLIBRASOfficeLinux() + "/LASO.log"
+	#define DBG_LASO_LOG_PATH enderecoLIBRASOfficeLinux() + "/LASO_DEBUG.log"
 #endif
 //END LIBRAS
 
