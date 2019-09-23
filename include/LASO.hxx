@@ -23,8 +23,8 @@
     extern std::string enderecoLIBRASOfficeLinuxVar = enderecoLIBRASOfficeLinux();
     extern std::string LASO_LOG = enderecoLIBRASOfficeLinuxVar + "/LASO.log";
     extern std::string LASO_DEBUG = enderecoLIBRASOfficeLinuxVar + "/LASO_DEBUG.log";
-	#define LASO_LOG_PATH LASO_LOG
-	#define DBG_LASO_LOG_PATH LASO_DEBUG
+	extern std::string LASO_LOG_PATH LASO_LOG;
+	extern std::string DBG_LASO_LOG_PATH LASO_DEBUG;
 #endif
 
 #ifdef _WIN32
@@ -33,8 +33,8 @@
     GetModuleFileName(NULL, enderecoLIBRASOffice, MAX_PATH);
     extern std::string endFinalLIBRASOffice = enderecoLIBRASOffice + "\\LASO.log";
     extern std::string endFinalLIBRASOfficeDebug = enderecoLIBRASOffice + "\\LASO_DEBUG.log";
-	#define LASO_LOG_PATH endFinalLIBRASOffice
-	#define DBG_LASO_LOG_PATH endFinalLIBRASOfficeDebug
+	extern std::string LASO_LOG_PATH endFinalLIBRASOffice;
+	extern std:: DBG_LASO_LOG_PATH endFinalLIBRASOfficeDebug;
 #endif 
 #endif
 //END LIBRAS
