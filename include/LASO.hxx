@@ -20,11 +20,8 @@
 	    return caminhoDir;
     }
     
-    extern std::string enderecoLIBRASOfficeLinuxVar = enderecoLIBRASOfficeLinux();
-    extern std::string LASO_LOG = enderecoLIBRASOfficeLinuxVar + "/LASO.log";
-    extern std::string LASO_DEBUG = enderecoLIBRASOfficeLinuxVar + "/LASO_DEBUG.log";
-	extern std::string LASO_LOG_PATH LASO_LOG;
-	extern std::string DBG_LASO_LOG_PATH LASO_DEBUG;
+	#define LASO_LOG_PATH enderecoLIBRASOfficeLinux() + "/LASO.log"
+	#define DBG_LASO_LOG_PATH enderecoLIBRASOfficeLinux() + "/LASO_DEBUG.log"
 #endif
 
 #ifdef _WIN32
