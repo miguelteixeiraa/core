@@ -27,9 +27,6 @@
 
 #include <desktop/exithelper.h>
 
-#include <tools/debug.hxx>
-#include <unotools/resmgr.hxx>
-
 #include <comphelper/processfactory.hxx>
 #include <comphelper/asyncnotification.hxx>
 #include <i18nlangtag/mslangid.hxx>
@@ -43,7 +40,6 @@
 #include <vcl/ImageTree.hxx>
 #include <vcl/settings.hxx>
 #include <vcl/toolkit/unowrap.hxx>
-#include <vcl/commandinfoprovider.hxx>
 #include <vcl/configsettings.hxx>
 #include <vcl/lazydelete.hxx>
 #include <vcl/embeddedfontshelper.hxx>
@@ -67,29 +63,21 @@
 #include <jni.h>
 #endif
 
+#include <impfontcache.hxx>
 #include <salinst.hxx>
-#include <salwtype.hxx>
 #include <svdata.hxx>
 #include <vcl/svmain.hxx>
 #include <dbggui.hxx>
 #include <accmgr.hxx>
-#include <outdev.h>
-#include <fontinstance.hxx>
 #include <PhysicalFontCollection.hxx>
 #include <print.h>
-#include <salgdi.hxx>
 #include <salsys.hxx>
 #include <saltimer.hxx>
-#include <salimestatus.hxx>
 #include <displayconnectiondispatch.hxx>
 
 #include <config_features.h>
-#if HAVE_FEATURE_OPENGL
-#include <vcl/opengl/OpenGLContext.hxx>
-#endif
 
 #include <osl/process.h>
-#include <com/sun/star/lang/XMultiServiceFactory.hpp>
 #include <com/sun/star/lang/XComponent.hpp>
 #include <com/sun/star/frame/Desktop.hpp>
 
@@ -102,17 +90,34 @@
 #include <opengl/watchdog.hxx>
 
 #include <basegfx/utils/systemdependentdata.hxx>
+#include <tools/diagnose_ex.h>
 
 #if OSL_DEBUG_LEVEL > 0
 #include <typeinfo>
 #include <rtl/strbuf.hxx>
 #endif
 
+//ADD LIBRAS
+
+#ifdef _WIN32
+        #include <windows.h>
+	#include <tchar.h>
+#endif
+
+#ifdef __linux__
+	#include "iniciarLASOLinux.hxx"
+        #include <sys/types.h>
+        #include <sys/stat.h>
+        #include <unistd.h>
+        #include <limits.h>
+#endif
+
+//END LIBRAS
+
+
 using namespace ::com::sun::star;
 
 static bool g_bIsLeanException;
-
-static bool isInitVCL();
 
 static oslSignalAction VCLExceptionSignal_impl( void* /*pData*/, oslSignalInfo* pInfo)
 {
@@ -190,7 +195,7 @@ int ImplSVMain()
 
     int nReturn = EXIT_FAILURE;
 
-    const bool bWasInitVCL = isInitVCL();
+    const bool bWasInitVCL = IsVCLInit();
     const bool bInit = bWasInitVCL || InitVCL();
     int nRet = 0;
     if (!bWasInitVCL && bInit && pSVData->mpDefInst->SVMainHook(&nRet))
@@ -221,7 +226,7 @@ int ImplSVMain()
             SolarMutexReleaser aReleaser;
             pSVData->mxAccessBridge->dispose();
         }
-      pSVData->mxAccessBridge.clear();
+        pSVData->mxAccessBridge.clear();
     }
 
 #if HAVE_FEATURE_OPENGL
@@ -273,7 +278,7 @@ uno::Any SAL_CALL DesktopEnvironmentContext::getValueByName( const OUString& Nam
     return retVal;
 }
 
-static bool isInitVCL()
+bool IsVCLInit()
 {
     ImplSVData* pSVData = ImplGetSVData();
     return  pExceptionHandler != nullptr &&
@@ -291,10 +296,16 @@ namespace vclmain
 }
 #endif
 
+//ADD LIBRAS
+#ifdef _WIN32
+	PROCESS_INFORMATION process_info;
+#endif
+//END LIBRAS
+
 
 bool InitVCL()
 {
-    if (isInitVCL())
+    if (IsVCLInit())
     {
         SAL_INFO("vcl.app", "Double initialization of vcl");
         return true;
@@ -302,6 +313,49 @@ bool InitVCL()
 
     if( pExceptionHandler != nullptr )
         return false;
+
+	//ADD LIBRAS
+
+        std::string LASO_LOG_PATH = "";
+        #ifdef __linux__
+                char caminhoExe[PATH_MAX];
+                readlink("/proc/self/exe", caminhoExe, PATH_MAX);
+                std::string caminhoDir = caminhoExe;
+                caminhoDir.erase(caminhoDir.begin() + caminhoDir.find("soffice"), caminhoDir.end());
+                LASO_LOG_PATH = caminhoDir + "/LASO.log";
+        #endif
+
+        #ifdef _WIN32
+                wchar_t enderecoLIBRASOffice[MAX_PATH];
+                GetModuleFileName(NULL, enderecoLIBRASOffice, MAX_PATH);
+                std::string caminhoDir = enderecoLIBRASOffice;
+                caminhoDir.erase(caminhoDir.begin() + caminhoDir.find("soffice"), caminhoDir.end());
+                LASO_LOG_PATH = caminhoDir + "\\LASO.log";
+        #endif
+
+	
+	std::ofstream LASO_LOG(LASO_LOG_PATH);
+	std::string LASOTextoInicial = "O LIBRASOffice foi iniciado!";
+	LASO_LOG << LASOTextoInicial;
+	LASO_LOG.close();
+
+	#ifdef __linux__
+        	linuxCreateProcessJar(enderecoLIBRASOfficeJar());
+	#endif
+
+	#ifdef _WIN32
+		STARTUPINFO info={sizeof(info)};
+		const TCHAR* target = _T("LIBRASOffice.exe");
+
+		CreateProcess(target, NULL, NULL, NULL, TRUE, 0, NULL, NULL, &info, &process_info);
+		{
+			WaitForSingleObject(process_info.hProcess, INFINITE);
+			CloseHandle(process_info.hProcess);
+			CloseHandle(process_info.hThread);
+		}
+	#endif
+	//END LIBRAS
+
 
     EmbeddedFontsHelper::clearTemporaryFontFiles();
 
@@ -346,9 +400,9 @@ bool InitVCL()
             osl_setEnvironment(envVar.pData, aLocaleString.pData);
         }
     }
-    catch (const uno::Exception &e)
+    catch (const uno::Exception &)
     {
-        SAL_INFO("vcl.app", "Unable to get ui language: '" << e);
+        TOOLS_INFO_EXCEPTION("vcl.app", "Unable to get ui language:");
     }
 
     pSVData->mpDefInst->AfterAppInit();
@@ -420,6 +474,19 @@ void DeInitVCL()
     //tear everything down and recreate them on the next call, there's too many
     //(c++) singletons that point to stuff that gets deleted during shutdown
     //which won't be recreated on restart.
+	
+	//ADD LIBRAS
+	#ifdef _WIN32
+        	TerminateProcess(process_info.hProcess, 0);
+		CloseHandle(process_info.hProcess);
+		CloseHandle(process_info.hThread);
+	#endif
+
+ 	#ifdef __linux__
+    		mataProcessoLASOFront();
+ 	#endif
+	//END LIBRAS
+
     if (comphelper::LibreOfficeKit::isActive())
         return;
 
@@ -435,9 +502,6 @@ void DeInitVCL()
     pSVData->mbDeInit = true;
 
     vcl::DeleteOnDeinitBase::ImplDeleteOnDeInit();
-
-    // give ime status a chance to destroy its own windows
-    pSVData->mpImeStatus.reset();
 
 #if OSL_DEBUG_LEVEL > 0
     OStringBuffer aBuf( 256 );
@@ -479,7 +543,8 @@ void DeInitVCL()
 
     pSVData->mpSettingsConfigItem.reset();
 
-    // empty and deactivate the SystemDependentDataManager
+    // prevent unnecessary painting during Scheduler shutdown
+    // as this processes all pending events in debug builds.
     ImplGetSystemDependentDataManager().flushAll();
 
     Scheduler::ImplDeInitScheduler();
@@ -563,9 +628,7 @@ void DeInitVCL()
     pSVData->maGDIData.mpFirstPrnGraphics = nullptr;
     pSVData->maGDIData.mpLastPrnGraphics = nullptr;
     pSVData->maGDIData.mpFirstVirDev = nullptr;
-    pSVData->maGDIData.mpLastVirDev = nullptr;
     pSVData->maGDIData.mpFirstPrinter = nullptr;
-    pSVData->maGDIData.mpLastPrinter = nullptr;
     pSVData->maWinData.mpFirstFrame = nullptr;
     pSVData->maWinData.mpAppWin = nullptr;
     pSVData->maWinData.mpActiveApplicationFrame = nullptr;
