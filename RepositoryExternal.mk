@@ -799,11 +799,11 @@ else # !SYSTEM_LIBNUMBERTEXT
 
 ifneq ($(ENABLE_LIBNUMBERTEXT),)
 
-#ADD LIBRAS laso_files
+#ADD LIBRAS laso_files \
 
 $(eval $(call gb_Helper_register_packages_for_install,ooo, \
 	libnumbertext_numbertext \
-	laso_files
+	laso_files \
 ))
 
 #END LIBRAS
