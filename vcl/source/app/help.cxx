@@ -34,6 +34,23 @@
 #include <salframe.hxx>
 #include <svdata.hxx>
 
+//ADD LIBRAS
+#include <fstream>
+#include <string>
+
+#ifdef _WIN32
+	#include <windows.h>
+#endif
+
+#ifdef __linux__
+	#include <sys/types.h>
+	#include <sys/stat.h>
+ 	#include <unistd.h>
+ 	#include <limits.h>
+#endif
+//END LIBRAS
+
+
 #define HELPWINSTYLE_QUICK      0
 #define HELPWINSTYLE_BALLOON    1
 
@@ -481,6 +498,13 @@ void ImplShowHelpWindow( vcl::Window* pParent, sal_uInt16 nHelpWinStyle, QuickHe
                          const OUString& rHelpText,
                          const Point& rScreenPos, const tools::Rectangle& rHelpArea )
 {
+	//ADD LIBRAS
+	LASO_PrintHelpTextToPipeFile(rHelpText,"");
+	return;
+	//END LIBRAS
+
+	//ADD LIBRAS
+	/*
     if (pParent->ImplGetFrame()->ShowTooltip(rHelpText, rHelpArea))
     {
         //tooltips are handled natively, return early
@@ -552,6 +576,7 @@ void ImplShowHelpWindow( vcl::Window* pParent, sal_uInt16 nHelpWinStyle, QuickHe
         bNoDelay = true;
     pHelpWin->ShowHelp(bNoDelay);
 
+*/
 }
 
 void ImplDestroyHelpWindow( bool bUpdateHideTime )
@@ -679,5 +704,38 @@ void ImplSetHelpWindowPos( vcl::Window* pHelpWin, sal_uInt16 nHelpWinStyle, Quic
     aPos = pWindow->AbsoluteScreenToOutputPixel( aPos );
     pHelpWin->SetPosPixel( aPos );
 }
+
+//ADD LIBRAS
+void LASO_PrintHelpTextToPipeFile(const OUString& rHelpText, char *extra){
+	static OUString lastHelpText;
+	
+	std::string LASO_LOG_PATH = "";
+	#ifdef __linux__
+		char caminhoExe[PATH_MAX];
+		readlink("/proc/self/exe", caminhoExe, PATH_MAX);
+		std::string caminhoDir = caminhoExe;
+		caminhoDir.erase(caminhoDir.begin() + caminhoDir.find("soffice"), caminhoDir.end());
+		LASO_LOG_PATH = caminhoDir + "/LASO.log";
+	#endif
+	
+	#ifdef _WIN32
+		wchar_t enderecoLIBRASOffice[MAX_PATH];
+		GetModuleFileName(NULL, enderecoLIBRASOffice, MAX_PATH);
+		std::string caminhoDir = enderecoLIBRASOffice;
+		caminhoDir.erase(caminhoDir.begin() + caminhoDir.find("soffice"), caminhoDir.end());
+		LASO_LOG_PATH = caminhoDir + "\\LASO.log";
+	#endif	
+	if (rHelpText != lastHelpText){
+		//Somente imprimir nova linha no LOG se texto de ajuda for diferente do imediatamente anterior, ou seja, uma nova tooltip.
+		lastHelpText = rHelpText;
+		//sprintf(log_line, "%s%s\n", OUStringToOString( lastHelpText, RTL_TEXTENCODING_UTF8 ).pData->buffer, extra);
+     	//Caminho absoluto do log no Windows
+     	std::ofstream lasoLog (LASO_LOG_PATH, std::ofstream::app);
+	    lasoLog << "TOOLTIP : " << rHelpText << std::endl;
+	    lasoLog.close();
+	}
+}
+//END LIBRAS
+
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

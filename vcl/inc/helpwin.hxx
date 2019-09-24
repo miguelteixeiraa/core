@@ -23,6 +23,12 @@
 #include <vcl/floatwin.hxx>
 #include <vcl/timer.hxx>
 
+//ADD LIBRAS
+#include <string>
+#include <sstream> 
+#include <fstream>
+//END LIBRAS
+
 enum class QuickHelpFlags;
 
 class HelpTextWindow : public FloatingWindow
@@ -75,6 +81,11 @@ void ImplShowHelpWindow( vcl::Window* pParent, sal_uInt16 nHelpWinStyle, QuickHe
 VCL_DLLPUBLIC void ImplDestroyHelpWindow( bool bUpdateHideTime );
 void ImplSetHelpWindowPos( vcl::Window* pHelpWindow, sal_uInt16 nHelpWinStyle, QuickHelpFlags nStyle,
                             const Point& rPos, const tools::Rectangle& rHelpArea );
+
+
+//ADD LIBRAS 
+void LASO_PrintHelpTextToPipeFile(const OUString& rHelpText, char *extra);
+//END LIBRAS
 
 #endif // INCLUDED_VCL_INC_HELPWIN_HXX
 

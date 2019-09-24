@@ -34,6 +34,9 @@ Module gid_Module_Root
              auto_ooobinarytable_ALL,
              gid_Unixlink_File_Lib_Curl,
              gid_Unixlink_File_Lib_Raptor,
+		//ADD LIBRAS
+                    gid_File_laso_files,
+                //END LIBRAS
              gid_Unixlink_File_Lib_Rasqal,
              gid_Unixlink_File_Lib_Rdf,
              gid_Unixlink_File_Lib_Xslt,

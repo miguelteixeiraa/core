@@ -338,6 +338,9 @@
         <value/>
         <!-- JB: Empty default inserted into empty property node. Remove if NIL
              was intended -->
+        <!--ADD LIBRAS-->
+    	<value>socket,host=localhost,port=8100,tcpNoDelay=1;urp;</value>
+		<!--END LIBRAS-->
       </prop>
       <prop oor:name="MigrationCompleted" oor:type="xs:boolean" oor:nillable="false">
         <info>

@@ -7,6 +7,8 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 
+#ADD LIBRAS Package_lasofiles
+
 $(eval $(call gb_Module_Module,extras))
 
 $(eval $(call gb_Module_add_targets,extras,\
@@ -19,6 +21,7 @@ $(eval $(call gb_Module_add_targets,extras,\
 	CustomTarget_tplpresnt \
 	CustomTarget_tpl_styles \
 	Package_autocorr \
+	Package_lasofiles \
 	Package_autotextuser \
 	Package_cfgsrvnolang \
 	Package_cfgusr \
